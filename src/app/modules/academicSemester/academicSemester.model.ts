@@ -35,6 +35,17 @@ const AcademicSemesterSchema = new Schema<TAcademicSemester>(
   },
 );
 
+AcademicSemesterSchema.pre('save', async function (next) {
+  const isSemesterExits = await AcademicSemesterModel.findOne({
+    year: this.year,
+    name: this.name,
+  });
+  if (isSemesterExits) {
+    throw new Error('Semester already Exits !!');
+  }
+  next();
+});
+
 export const AcademicSemesterModel = model<TAcademicSemester>(
   'AcademicSemester',
   AcademicSemesterSchema,
